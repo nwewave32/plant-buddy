@@ -34,14 +34,14 @@
 ### 2주차 — 엔티티, 식물 CRUD, 프리셋
 
 #### 엔티티 레이어
-- [ ] `entities/plant` — PlantCard, PlantPhoto, StatusBadge UI 구현
-- [ ] `entities/plant` — types.ts, usePlant 훅, plantApi 구현
-- [ ] `entities/season` — SeasonBadge, SeasonSummary UI 구현
-- [ ] `entities/season` — types.ts, seasonHelpers 구현
-- [ ] `entities/watering-log` — LogEntry UI, types 구현
-- [ ] `entities/user` — UserAvatar UI 구현
-- [ ] `entities/delegation` — DelegationCard UI, types 구현
-- [ ] 모든 엔티티 `index.ts` public API export 정리
+- [x] `entities/plant` — PlantCard, PlantPhoto, StatusBadge UI 구현
+- [x] `entities/plant` — types.ts, usePlant 훅, plantApi 구현
+- [x] `entities/season` — SeasonBadge, SeasonSummary UI 구현
+- [x] `entities/season` — types.ts, seasonHelpers 구현
+- [x] `entities/watering-log` — LogEntry UI, types 구현
+- [x] `entities/user` — UserAvatar UI 구현
+- [x] `entities/delegation` — DelegationCard UI, types 구현
+- [x] 모든 엔티티 `index.ts` public API export 정리
 
 #### 식물 관리 (CRUD)
 - [ ] `features/manage-plant` — PlantForm UI 구현
