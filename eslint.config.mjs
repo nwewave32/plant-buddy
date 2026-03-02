@@ -13,6 +13,27 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    rules: {
+      // FSD: 슬라이스 내부 모듈 직접 import 금지 (shared 제외)
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            "@/entities/*/ui/*",
+            "@/entities/*/model/*",
+            "@/entities/*/api/*",
+            "@/features/*/ui/*",
+            "@/features/*/model/*",
+            "@/features/*/api/*",
+            "@/widgets/*/ui/*",
+            "@/widgets/*/model/*",
+            "@/views/*/ui/*",
+          ],
+        },
+      ],
+    },
+  },
 ]);
 
 export default eslintConfig;
