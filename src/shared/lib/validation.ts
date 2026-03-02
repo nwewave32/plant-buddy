@@ -50,3 +50,7 @@ export const createDelegationSchema = z.object({
   start_date: z.string(),
   end_date: z.string(),
 });
+
+export const loginSchema = z.object({
+  email: z.string().email('유효한 이메일을 입력해주세요'),
+});

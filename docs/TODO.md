@@ -25,11 +25,11 @@
 - [ ] Supabase Storage 버킷 생성 (식물 사진용)
 
 #### 인증 (Auth)
-- [ ] Supabase Auth Magic Link 설정
-- [ ] `features/auth` — LoginForm UI 구현
-- [ ] `entities/user` — types, useCurrentUser 훅 구현
-- [ ] 인증 미들웨어 (middleware.ts) — 미인증 사용자 리다이렉트
-- [ ] 로그인/로그아웃 플로우 E2E 동작 확인
+- [x] Supabase Auth Magic Link 설정
+- [x] `features/auth` — LoginForm UI 구현
+- [x] `entities/user` — types, useCurrentUser 훅 구현
+- [x] 인증 미들웨어 (middleware.ts) — 미인증 사용자 리다이렉트
+- [x] 로그인/로그아웃 플로우 E2E 동작 확인
 
 ### 2주차 — 엔티티, 식물 CRUD, 프리셋
 
