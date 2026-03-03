@@ -44,31 +44,31 @@
 - [x] 모든 엔티티 `index.ts` public API export 정리
 
 #### 식물 관리 (CRUD)
-- [ ] `features/manage-plant` — PlantForm UI 구현
-- [ ] `features/manage-plant` — usePlantForm 훅 (Zod 검증 포함)
-- [ ] `features/manage-plant` — managePlant API 함수 (생성/수정/삭제)
-- [ ] `GET /api/plants` — 식물 목록 API 구현 (`?mine=true` 필터)
-- [ ] `GET /api/plants/[id]` — 식물 상세 API 구현 (logs, presets 포함)
-- [ ] `POST /api/plants` — 식물 등록 API 구현 (admin 권한)
-- [ ] `PATCH /api/plants/[id]` — 식물 수정 API 구현
-- [ ] `DELETE /api/plants/[id]` — 식물 삭제 API 구현 (admin 권한)
-- [ ] 이미지 업로드 (Supabase Storage 연동)
+- [x] `features/manage-plant` — PlantForm UI 구현
+- [x] `features/manage-plant` — usePlantForm 훅 (Zod 검증 포함)
+- [x] `features/manage-plant` — managePlant API 함수 (생성/수정/삭제)
+- [x] `GET /api/plants` — 식물 목록 API 구현 (`?mine=true` 필터)
+- [x] `GET /api/plants/[id]` — 식물 상세 API 구현 (logs, presets 포함)
+- [x] `POST /api/plants` — 식물 등록 API 구현 (admin 권한)
+- [x] `PATCH /api/plants/[id]` — 식물 수정 API 구현
+- [x] `DELETE /api/plants/[id]` — 식물 삭제 API 구현 (admin 권한)
+- [x] 이미지 업로드 (Supabase Storage 연동)
 
 #### 계절 프리셋
-- [ ] `features/manage-seasonal-presets` — useSeasonalPresets 훅
-- [ ] `features/manage-seasonal-presets` — presets API 함수
-- [ ] `widgets/seasonal-preset-editor` — SeasonalPresetEditor UI (탭 기반 4계절 편집)
-- [ ] `widgets/seasonal-preset-editor` — usePresetForm 훅
-- [ ] `GET /api/plants/[id]/presets` — 4계절 프리셋 조회 API
-- [ ] `PUT /api/plants/[id]/presets` — 프리셋 일괄 upsert API (enabled/disabled 처리)
+- [x] `features/manage-seasonal-presets` — useSeasonalPresets 훅
+- [x] `features/manage-seasonal-presets` — presets API 함수
+- [x] `widgets/seasonal-preset-editor` — SeasonalPresetEditor UI (탭 기반 4계절 편집)
+- [x] `widgets/seasonal-preset-editor` — usePresetForm 훅
+- [x] `GET /api/plants/[id]/presets` — 4계절 프리셋 조회 API
+- [x] `PUT /api/plants/[id]/presets` — 프리셋 일괄 upsert API (enabled/disabled 처리)
 
 #### 페이지 구성
-- [ ] `views/plant-detail` — PlantDetailPage 컴포지션
-- [ ] `views/plant-form` — PlantFormPage 컴포지션 (등록/수정 공용)
-- [ ] `app/(main)/plants` — 식물 목록 페이지 완성
-- [ ] `app/(main)/plants/[id]` — 식물 상세 페이지 연결
-- [ ] `app/(main)/plants/[id]/edit` — 식물 수정 페이지 연결
-- [ ] `app/(main)/plants/new` — 식물 등록 페이지 연결
+- [x] `views/plant-detail` — PlantDetailPage 컴포지션
+- [x] `views/plant-form` — PlantFormPage 컴포지션 (등록/수정 공용)
+- [x] `app/(main)/plants` — 식물 목록 페이지 완성
+- [x] `app/(main)/plants/[id]` — 식물 상세 페이지 연결
+- [x] `app/(main)/plants/[id]/edit` — 식물 수정 페이지 연결
+- [x] `app/(main)/plants/new` — 식물 등록 페이지 연결
 
 ### 3주차 — 물주기, 대시보드, 알림, 계절 전환
 

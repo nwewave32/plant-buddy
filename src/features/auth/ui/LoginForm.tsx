@@ -1,11 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import { useSupabase } from '@/app/providers/SupabaseProvider';
-import { signInWithMagicLink } from '../api/auth';
 import { loginSchema } from '@/shared/lib/validation';
 import { Button } from '@/shared/ui/button';
-import { Input } from '@/shared/ui/input';
 import {
   Card,
   CardContent,
@@ -13,6 +10,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/shared/ui/card';
+import { Input } from '@/shared/ui/input';
+import { useState } from 'react';
+import { signInWithMagicLink } from '../api/auth';
 
 type Status = 'idle' | 'loading' | 'success' | 'error';
 
@@ -46,34 +46,34 @@ export function LoginForm() {
   };
 
   return (
-    <Card className="w-full max-w-sm">
+    <Card className='w-full max-w-sm'>
       <CardHeader>
-        <CardTitle className="text-xl">Plant Buddy 로그인</CardTitle>
+        <CardTitle className='text-xl'>Plant Buddy 로그인</CardTitle>
         <CardDescription>
           이메일을 입력하면 로그인 링크를 보내드립니다.
         </CardDescription>
       </CardHeader>
       <CardContent>
         {status === 'success' ? (
-          <p className="text-sm text-green-600">
+          <p className='text-sm text-green-600'>
             메일함을 확인해주세요! 로그인 링크를 보냈습니다.
           </p>
         ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
+          <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+            <div className='flex flex-col gap-2'>
               <Input
-                type="email"
-                placeholder="name@company.com"
+                type='email'
+                placeholder='name@company.com'
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={status === 'loading'}
                 aria-invalid={status === 'error' ? true : undefined}
               />
               {status === 'error' && errorMessage && (
-                <p className="text-sm text-destructive">{errorMessage}</p>
+                <p className='text-sm text-destructive'>{errorMessage}</p>
               )}
             </div>
-            <Button type="submit" disabled={status === 'loading'}>
+            <Button type='submit' disabled={status === 'loading'}>
               {status === 'loading' ? '전송 중...' : '로그인 링크 전송'}
             </Button>
           </form>
