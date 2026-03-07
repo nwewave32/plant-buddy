@@ -19,7 +19,15 @@ export const createPlantSchema = z.object({
   watering_method: wateringMethodSchema.optional(),
   sunlight: sunlightSchema.optional(),
   care_notes: z.string().optional(),
-  next_watering_date: z.string(),
+  next_watering_date: z.string().min(1, '다음 물주기 날짜를 선택해주세요').refine(
+    (val) => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const selected = new Date(val + 'T00:00:00');
+      return selected >= today;
+    },
+    { message: '오늘 이후 날짜를 선택해주세요' },
+  ),
 });
 
 export const seasonalPresetSchema = z.object({

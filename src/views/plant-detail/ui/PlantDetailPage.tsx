@@ -54,7 +54,8 @@ export function PlantDetailPage({ plantId }: PlantDetailPageProps) {
     setIsDeleting(true);
     try {
       await deletePlant(plantId);
-      router.push('/plants');
+      router.replace('/plants');
+      router.refresh();
     } catch {
       setIsDeleting(false);
     }

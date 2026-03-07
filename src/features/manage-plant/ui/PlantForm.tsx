@@ -78,7 +78,9 @@ export function PlantForm({ mode, plantId, initialData }: PlantFormProps) {
       className="flex flex-col gap-6"
     >
       {errors._form && (
-        <p className="text-sm text-destructive">{errors._form}</p>
+        <div className="rounded-md border border-destructive bg-destructive/10 p-3">
+          <p className="text-sm font-medium text-destructive">{errors._form}</p>
+        </div>
       )}
 
       {/* 이름 (필수) */}
@@ -195,6 +197,7 @@ export function PlantForm({ mode, plantId, initialData }: PlantFormProps) {
         <Input
           id="next_watering_date"
           type="date"
+          min={new Date().toISOString().split('T')[0]}
           value={formData.next_watering_date}
           onChange={(e) => updateField('next_watering_date', e.target.value)}
         />
