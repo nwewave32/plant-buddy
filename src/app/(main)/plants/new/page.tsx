@@ -1,37 +1,25 @@
-'use client';
-
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/app/providers/AuthProvider';
+import { redirect } from 'next/navigation';
+import { createClient } from '@/shared/api/supabase/server';
 import { PlantFormPage } from '@/views/plant-form';
 
-export default function PlantNewRoute() {
-  const router = useRouter();
-  const { profile, isLoading } = useAuth();
-  const isAdmin = profile?.role === 'admin';
+export default async function PlantNewRoute() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  useEffect(() => {
-    if (!isLoading && !isAdmin) {
-      router.replace('/plants');
-    }
-  }, [isLoading, isAdmin, router]);
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <p className="text-muted-foreground">로딩 중...</p>
-      </div>
-    );
+  if (!user) {
+    redirect('/login');
   }
 
-  if (!isAdmin) {
-    return (
-      <div className="flex flex-col items-center gap-4 p-8">
-        <p className="text-sm font-medium text-destructive">
-          관리자 권한이 필요합니다
-        </p>
-      </div>
-    );
+  const { data: profile } = await supabase
+    .from('users')
+    .select('role')
+    .eq('id', user.id)
+    .single<{ role: string }>();
+
+  if (profile?.role !== 'admin') {
+    redirect('/plants');
   }
 
   return <PlantFormPage />;

@@ -128,6 +128,15 @@ export function usePlantForm({ mode, plantId, initialData, onSuccess }: UsePlant
       return false;
     }
 
+    // 과거 날짜 체크 (클라이언트 타임존 기준 — 서버/클라이언트 TZ 불일치 방지)
+    if (mode === 'create' && formData.next_watering_date) {
+      const today = new Date().toISOString().split('T')[0];
+      if (formData.next_watering_date < today) {
+        setErrors({ next_watering_date: '오늘 이후 날짜를 선택해주세요' });
+        return false;
+      }
+    }
+
     setErrors({});
     return true;
   }, [formData, mode]);

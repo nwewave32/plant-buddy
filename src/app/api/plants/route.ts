@@ -59,6 +59,15 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // 과거 날짜 체크 (UTC 기준 — 서버 타임존에 의존하지 않도록 YYYY-MM-DD 문자열 비교)
+  const todayUTC = new Date().toISOString().split('T')[0];
+  if (parsed.data.next_watering_date < todayUTC) {
+    return NextResponse.json(
+      { error: '다음 물주기 날짜는 오늘 이후여야 합니다' },
+      { status: 400 },
+    );
+  }
+
   const currentSeason = getCurrentSeason();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
