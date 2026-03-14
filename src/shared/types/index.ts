@@ -92,6 +92,25 @@ export interface PushSubscription {
 }
 
 // === Database type helper for Supabase ===
+// === RPC 타입 ===
+// complete_watering DB 함수의 파라미터/반환 타입
+// → 마이그레이션: 00006_complete_watering_rpc.sql 참고
+export interface CompleteWateringArgs {
+  p_plant_id: string;
+  p_user_id: string;
+  p_scheduled_date: string;
+  p_was_late: boolean;
+  p_season: string;
+  p_memo: string | null;
+  p_next_watering_date: string;
+}
+
+export interface CompleteWateringResult {
+  log: WateringLog;
+  plant: Plant;
+  next_watering_date: string;
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -103,5 +122,21 @@ export interface Database {
       delegations: { Row: Delegation; Insert: Omit<Delegation, 'id' | 'created_at'>; Update: Partial<Delegation> };
       push_subscriptions: { Row: PushSubscription; Insert: Omit<PushSubscription, 'id' | 'created_at'>; Update: Partial<PushSubscription> };
     };
+    Views: Record<string, never>;
+    Functions: {
+      complete_watering: {
+        Args: {
+          p_plant_id: string;
+          p_user_id: string;
+          p_scheduled_date: string;
+          p_was_late: boolean;
+          p_season: string;
+          p_memo: string | null;
+          p_next_watering_date: string;
+        };
+        Returns: CompleteWateringResult;
+      };
+    };
+    Enums: Record<string, never>;
   };
 }

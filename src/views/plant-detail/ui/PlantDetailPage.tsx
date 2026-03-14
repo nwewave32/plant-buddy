@@ -10,6 +10,7 @@ import { getCurrentSeason } from '@/shared/lib/season';
 import { usePlant, PlantPhoto, StatusBadge } from '@/entities/plant';
 import { useAuth } from '@/app/providers/AuthProvider';
 import { deletePlant } from '@/features/manage-plant';
+import { WateringButton } from '@/features/complete-watering';
 import { useSeasonalPresets } from '@/features/manage-seasonal-presets';
 import { SeasonalPresetEditor } from '@/widgets/seasonal-preset-editor';
 import { Button } from '@/shared/ui/button';
@@ -145,6 +146,11 @@ export function PlantDetailPage({ plantId }: PlantDetailPageProps) {
           <StatusBadge status={plant.status} />
         </div>
       </div>
+
+      {/* 물주기 완료 버튼 — 권한이 없으면 서버가 403으로 거부 */}
+      {profile && (
+        <WateringButton plantId={plantId} onSuccess={refetch} />
+      )}
 
       {/* 관리 정보 */}
       <div className="rounded-md border p-4">

@@ -73,14 +73,14 @@
 ### 3주차 — 물주기, 대시보드, 알림, 계절 전환
 
 #### 물주기 완료
-- [ ] `features/complete-watering` — WateringButton UI (메모 입력 포함)
-- [ ] `features/complete-watering` — useCompleteWatering 훅
-- [ ] `features/complete-watering` — completeWatering API 함수
-- [ ] `POST /api/plants/[id]/water` — 물주기 완료 API 구현
-  - [ ] 담당자/위임 대리자 권한 확인
-  - [ ] watering_logs 삽입 (season 포함)
-  - [ ] next_watering_date 재계산
-- [ ] `GET /api/plants/[id]/watering-logs` — 물주기 이력 API 구현
+- [x] `features/complete-watering` — WateringButton UI (메모 입력 포함)
+- [x] `features/complete-watering` — useCompleteWatering 훅
+- [x] `features/complete-watering` — completeWatering API 함수
+- [x] `POST /api/plants/[id]/water` — 물주기 완료 API 구현
+  - [x] 담당자/위임 대리자 권한 확인
+  - [x] watering_logs 삽입 (season 포함)
+  - [x] next_watering_date 재계산
+- [x] `GET /api/plants/[id]/watering-logs` — 물주기 이력 API 구현
 
 #### 대시보드
 - [ ] `widgets/today-tasks` — TodayTasks UI + useTodayTasks 훅

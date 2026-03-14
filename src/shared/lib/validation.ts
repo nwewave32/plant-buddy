@@ -44,7 +44,7 @@ export const upsertPresetsSchema = z.object({
 });
 
 export const waterPlantSchema = z.object({
-  memo: z.string().optional(),
+  memo: z.string().max(500, '메모는 500자 이내로 입력해주세요').optional(),
 });
 
 export const changeStatusSchema = z.object({
