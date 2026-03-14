@@ -7,17 +7,16 @@ export async function uploadPlantImage(
 ): Promise<string> {
   const ext = file.name.split('.').pop() ?? 'jpg';
   const fileName = `${crypto.randomUUID()}.${ext}`;
-  const filePath = `plant-photos/${fileName}`;
 
   const { error } = await supabase.storage
     .from('plant-photos')
-    .upload(filePath, file, { contentType: file.type });
+    .upload(fileName, file, { contentType: file.type });
 
   if (error) throw error;
 
   const { data } = supabase.storage
     .from('plant-photos')
-    .getPublicUrl(filePath);
+    .getPublicUrl(fileName);
 
   return data.publicUrl;
 }

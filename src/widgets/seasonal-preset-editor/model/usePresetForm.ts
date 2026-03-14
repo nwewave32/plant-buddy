@@ -56,7 +56,13 @@ export function usePresetForm(existingPresets: SeasonalPreset[]) {
         ...prev,
         [season]: { ...prev[season], [key]: value },
       }));
-      setErrors({});
+      setErrors((prev) => {
+        const errorKey = `${season}.${String(key)}`;
+        if (!prev[errorKey]) return prev;
+        const next = { ...prev };
+        delete next[errorKey];
+        return next;
+      });
     },
     [],
   );

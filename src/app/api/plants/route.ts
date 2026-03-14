@@ -44,7 +44,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: '관리자 권한이 필요합니다' }, { status: 403 });
   }
 
-  const body = await request.json();
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: '잘못된 요청 형식입니다' }, { status: 400 });
+  }
+
   const parsed = createPlantSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(

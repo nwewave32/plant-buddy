@@ -36,6 +36,27 @@ const INITIAL_FORM: PlantFormData = {
   photo_url: '',
 };
 
+function buildInput(formData: PlantFormData, photoUrl?: string): Record<string, unknown> {
+  const input: Record<string, unknown> = {
+    name: formData.name,
+    next_watering_date: formData.next_watering_date,
+    watering_interval_days: formData.watering_interval_days,
+  };
+
+  if (formData.species) input.species = formData.species;
+  if (formData.location) input.location = formData.location;
+  if (formData.water_amount_ml) input.water_amount_ml = Number(formData.water_amount_ml);
+  if (formData.watering_method) input.watering_method = formData.watering_method;
+  if (formData.sunlight) input.sunlight = formData.sunlight;
+  if (formData.care_notes) input.care_notes = formData.care_notes;
+  if (formData.assigned_user_id) input.assigned_user_id = formData.assigned_user_id;
+
+  const url = photoUrl ?? formData.photo_url;
+  if (url) input.photo_url = url;
+
+  return input;
+}
+
 function plantToFormData(plant: Plant): PlantFormData {
   return {
     name: plant.name,
@@ -85,30 +106,14 @@ export function usePlantForm({ mode, plantId, initialData, onSuccess }: UsePlant
 
   const handleImageChange = useCallback((file: File | null) => {
     setImageFile(file);
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setImagePreview(url);
-    } else {
-      setImagePreview(null);
-    }
+    setImagePreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return file ? URL.createObjectURL(file) : null;
+    });
   }, []);
 
   const validate = useCallback((): boolean => {
-    const input: Record<string, unknown> = {
-      name: formData.name,
-      next_watering_date: formData.next_watering_date,
-      watering_interval_days: formData.watering_interval_days,
-    };
-
-    if (formData.species) input.species = formData.species;
-    if (formData.location) input.location = formData.location;
-    if (formData.water_amount_ml) input.water_amount_ml = Number(formData.water_amount_ml);
-    if (formData.watering_method) input.watering_method = formData.watering_method;
-    if (formData.sunlight) input.sunlight = formData.sunlight;
-    if (formData.care_notes) input.care_notes = formData.care_notes;
-    if (formData.assigned_user_id) input.assigned_user_id = formData.assigned_user_id;
-    if (formData.photo_url) input.photo_url = formData.photo_url;
-
+    const input = buildInput(formData);
     const schema = mode === 'edit' ? createPlantSchema.partial() : createPlantSchema;
     const result = schema.safeParse(input);
     if (!result.success) {
@@ -132,27 +137,14 @@ export function usePlantForm({ mode, plantId, initialData, onSuccess }: UsePlant
     setIsSubmitting(true);
 
     try {
-      let photoUrl = formData.photo_url;
+      let photoUrl: string | undefined;
 
       // 이미지 파일이 있으면 업로드
       if (imageFile && supabase) {
         photoUrl = await uploadPlantImage(supabase, imageFile);
       }
 
-      const input: Record<string, unknown> = {
-        name: formData.name,
-        next_watering_date: formData.next_watering_date,
-        watering_interval_days: formData.watering_interval_days,
-      };
-
-      if (formData.species) input.species = formData.species;
-      if (formData.location) input.location = formData.location;
-      if (formData.water_amount_ml) input.water_amount_ml = Number(formData.water_amount_ml);
-      if (formData.watering_method) input.watering_method = formData.watering_method;
-      if (formData.sunlight) input.sunlight = formData.sunlight;
-      if (formData.care_notes) input.care_notes = formData.care_notes;
-      if (formData.assigned_user_id) input.assigned_user_id = formData.assigned_user_id;
-      if (photoUrl) input.photo_url = photoUrl;
+      const input = buildInput(formData, photoUrl);
 
       let plant: Plant;
       if (mode === 'create') {

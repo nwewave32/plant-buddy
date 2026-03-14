@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/shared/api/supabase/server';
-import { createPlantSchema } from '@/shared/lib/validation';
+import { createPlantSchema, uuidSchema } from '@/shared/lib/validation';
 import type { Plant, SeasonalPreset, WateringLog } from '@/shared/types';
 
 type RouteContext = { params: Promise<{ id: string }> };
@@ -8,6 +8,9 @@ type RouteContext = { params: Promise<{ id: string }> };
 // GET /api/plants/[id] — 식물 상세
 export async function GET(_request: NextRequest, { params }: RouteContext) {
   const { id } = await params;
+  if (!uuidSchema.safeParse(id).success) {
+    return NextResponse.json({ error: '잘못된 식물 ID입니다' }, { status: 400 });
+  }
   const supabase = await createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) {
@@ -59,6 +62,9 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
 // PATCH /api/plants/[id] — 식물 수정
 export async function PATCH(request: NextRequest, { params }: RouteContext) {
   const { id } = await params;
+  if (!uuidSchema.safeParse(id).success) {
+    return NextResponse.json({ error: '잘못된 식물 ID입니다' }, { status: 400 });
+  }
   const supabase = await createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) {
@@ -88,7 +94,13 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
     return NextResponse.json({ error: '수정 권한이 없습니다' }, { status: 403 });
   }
 
-  const body = await request.json();
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: '잘못된 요청 형식입니다' }, { status: 400 });
+  }
+
   const parsed = createPlantSchema.partial().safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
@@ -114,6 +126,9 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
 // DELETE /api/plants/[id] — 식물 삭제 (admin)
 export async function DELETE(_request: NextRequest, { params }: RouteContext) {
   const { id } = await params;
+  if (!uuidSchema.safeParse(id).success) {
+    return NextResponse.json({ error: '잘못된 식물 ID입니다' }, { status: 400 });
+  }
   const supabase = await createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) {

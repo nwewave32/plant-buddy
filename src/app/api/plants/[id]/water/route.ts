@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import { createClient } from '@/shared/api/supabase/server';
-import { waterPlantSchema } from '@/shared/lib/validation';
+import { uuidSchema, waterPlantSchema } from '@/shared/lib/validation';
 import type { CompleteWateringArgs, CompleteWateringResult, Plant } from '@/shared/types';
 
 type RouteContext = { params: Promise<{ id: string }> };
-
-const uuidSchema = z.string().uuid();
 
 // POST /api/plants/[id]/water — 물주기 완료
 //

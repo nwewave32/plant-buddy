@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+export const uuidSchema = z.string().uuid('잘못된 ID 형식입니다');
+
 export const seasonSchema = z.enum(['spring', 'summer', 'autumn', 'winter']);
 
 export const plantStatusSchema = z.enum(['healthy', 'caution', 'danger']);

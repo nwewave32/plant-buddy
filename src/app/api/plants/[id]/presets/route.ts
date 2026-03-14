@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/shared/api/supabase/server';
-import { upsertPresetsSchema } from '@/shared/lib/validation';
+import { upsertPresetsSchema, uuidSchema } from '@/shared/lib/validation';
 import { getCurrentSeason } from '@/shared/lib/season';
 
 type RouteContext = { params: Promise<{ id: string }> };
@@ -8,6 +8,9 @@ type RouteContext = { params: Promise<{ id: string }> };
 // GET /api/plants/[id]/presets — 4계절 프리셋 조회
 export async function GET(_request: NextRequest, { params }: RouteContext) {
   const { id } = await params;
+  if (!uuidSchema.safeParse(id).success) {
+    return NextResponse.json({ error: '잘못된 식물 ID입니다' }, { status: 400 });
+  }
   const supabase = await createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) {
@@ -30,6 +33,9 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
 // PUT /api/plants/[id]/presets — 프리셋 일괄 upsert (admin)
 export async function PUT(request: NextRequest, { params }: RouteContext) {
   const { id } = await params;
+  if (!uuidSchema.safeParse(id).success) {
+    return NextResponse.json({ error: '잘못된 식물 ID입니다' }, { status: 400 });
+  }
   const supabase = await createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) {
@@ -46,7 +52,13 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
     return NextResponse.json({ error: '관리자 권한이 필요합니다' }, { status: 403 });
   }
 
-  const body = await request.json();
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: '잘못된 요청 형식입니다' }, { status: 400 });
+  }
+
   const parsed = upsertPresetsSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(

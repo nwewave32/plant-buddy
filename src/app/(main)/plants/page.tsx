@@ -14,6 +14,7 @@ export default function PlantsPage() {
   const { profile } = useAuth();
   const [plants, setPlants] = useState<Plant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [mineOnly, setMineOnly] = useState(false);
 
   const isAdmin = profile?.role === 'admin';
@@ -21,14 +22,15 @@ export default function PlantsPage() {
   const load = useCallback(async () => {
     if (!supabase) return;
     setIsLoading(true);
+    setError(null);
     try {
       const data = await fetchPlants(
         supabase,
         mineOnly && profile ? { assignedUserId: profile.id } : undefined,
       );
       setPlants(data);
-    } catch {
-      // 에러 무시
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '식물 목록을 불러오지 못했습니다');
     } finally {
       setIsLoading(false);
     }
@@ -74,6 +76,8 @@ export default function PlantsPage() {
       {/* 목록 */}
       {isLoading ? (
         <p className="text-center text-muted-foreground">로딩 중...</p>
+      ) : error ? (
+        <p className="text-center text-sm text-destructive">{error}</p>
       ) : plants.length === 0 ? (
         <p className="text-center text-muted-foreground">
           {mineOnly ? '담당 중인 식물이 없습니다' : '등록된 식물이 없습니다'}
