@@ -12,6 +12,7 @@ import {
 } from '@/shared/ui/card';
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { signInWithMagicLink } from '../api/auth';
 
@@ -21,6 +22,7 @@ type Status = 'idle' | 'loading' | 'success' | 'error';
 
 export function LoginForm() {
   const { supabase } = useSupabase();
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState<Status>('idle');
@@ -78,7 +80,7 @@ export function LoginForm() {
       return;
     }
 
-    window.location.href = '/';
+    router.push('/');
   };
 
   return (
