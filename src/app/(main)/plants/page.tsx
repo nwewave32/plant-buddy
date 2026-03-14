@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Plus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { ArrowLeft, Plus } from 'lucide-react';
 import type { Plant } from '@/shared/types';
 import { useSupabase } from '@/app/providers/SupabaseProvider';
 import { useAuth } from '@/app/providers/AuthProvider';
@@ -10,6 +11,7 @@ import { fetchPlants, PlantCard } from '@/entities/plant';
 import { Button } from '@/shared/ui/button';
 
 export default function PlantsPage() {
+  const router = useRouter();
   const { supabase } = useSupabase();
   const { profile } = useAuth();
   const [plants, setPlants] = useState<Plant[]>([]);
@@ -44,7 +46,12 @@ export default function PlantsPage() {
     <div className="flex flex-col gap-4 p-4">
       {/* 헤더 */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">식물 목록</h1>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" onClick={() => router.back()}>
+            <ArrowLeft className="size-5" />
+          </Button>
+          <h1 className="text-2xl font-bold">식물 목록</h1>
+        </div>
         {isAdmin && (
           <Button size="sm" asChild>
             <Link href="/plants/new">

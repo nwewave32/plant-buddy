@@ -1,6 +1,7 @@
 'use client';
 
 import { useAuth } from '@/app/providers/AuthProvider';
+import Link from 'next/link';
 import { Button } from '@/shared/ui/button';
 
 export default function HomePage() {
@@ -10,6 +11,10 @@ export default function HomePage() {
     <div className="flex flex-col gap-6 p-4">
       <h1 className="text-2xl font-bold">Plant Buddy</h1>
       {/* TODO: TodayTasks, MyPlantsOverview from @/views/home */}
+
+      <Button asChild size="lg" className="w-full">
+        <Link href="/plants">식물 목록 보기</Link>
+      </Button>
 
       {/* 임시 인증 확인 영역 — 대시보드 구현 시 제거 */}
       <div className="rounded-lg border p-4 text-sm">
