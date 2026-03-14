@@ -54,7 +54,7 @@ export function PlantForm({ mode, plantId, initialData }: PlantFormProps) {
     plantId,
     initialData,
     onSuccess: (plant) => {
-      router.push(`/plants/${plant.id}`);
+      router.replace(`/plants/${plant.id}`);
     },
   });
 
