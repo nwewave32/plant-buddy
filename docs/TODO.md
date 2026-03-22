@@ -83,14 +83,14 @@
 - [x] `GET /api/plants/[id]/watering-logs` — 물주기 이력 API 구현
 
 #### 대시보드
-- [ ] `widgets/today-tasks` — TodayTasks UI + useTodayTasks 훅
-- [ ] `widgets/my-plants-overview` — MyPlantsOverview UI
-- [ ] `views/home` — HomePage 컴포지션 (TodayTasks + MyPlantsOverview)
-- [ ] `GET /api/dashboard` — 개인 대시보드 API 구현
-- [ ] `app/(main)/page.tsx` — 홈 페이지 연결
-- [ ] 현재 계절 모드 표시 (SeasonBadge)
-- [ ] 오늘의 할 일 + 다음 예정 식물 표시
-- [ ] 연체(지남) 식물 강조 표시
+- [x] `widgets/today-tasks` — TodayTasks UI + useDashboard 훅
+- [x] `widgets/my-plants-overview` — MyPlantsOverview UI
+- [x] `views/home` — HomePage 컴포지션 (TodayTasks + MyPlantsOverview)
+- [ ] `GET /api/dashboard` — 개인 대시보드 API 구현 (클라이언트 직접 쿼리로 대체, 501 스텁 유지)
+- [x] `app/(main)/page.tsx` — 홈 페이지 연결
+- [x] 현재 계절 모드 표시 (SeasonBadge)
+- [x] 오늘의 할 일 + 다음 예정 식물 표시
+- [x] 연체(지남) 식물 강조 표시
 
 #### 푸시 알림
 - [ ] VAPID 키 생성 및 환경변수 설정
