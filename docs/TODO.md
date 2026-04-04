@@ -122,9 +122,9 @@
 - [ ] 앱 아이콘 제작 (icon-192.png, icon-512.png, badge-72.png)
 
 #### 네비게이션
-- [ ] `widgets/navigation` — BottomNav UI (홈, 식물, 캘린더)
-- [ ] `widgets/navigation` — Header UI (설정, 프로필)
-- [ ] `app/(main)/layout.tsx` — BottomNav, Header 통합
+- [x] `widgets/navigation` — BottomNav UI (홈, 식물, 캘린더)
+- [x] `widgets/navigation` — Header UI (설정, 프로필)
+- [x] `app/(main)/layout.tsx` — BottomNav, Header 통합
 
 #### 설정
 - [ ] `views/settings` — SettingsPage 구현

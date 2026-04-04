@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Pencil, Trash2 } from 'lucide-react';
+import { useGoBack } from '@/shared/lib/useGoBack';
 import type { Season } from '@/shared/types';
 import { SEASON_ICONS, SEASON_LABELS } from '@/shared/config/seasons';
 import { getCurrentSeason } from '@/shared/lib/season';
@@ -42,6 +43,7 @@ const SUNLIGHT_LABELS: Record<string, string> = {
 
 export function PlantDetailPage({ plantId }: PlantDetailPageProps) {
   const router = useRouter();
+  const goBack = useGoBack('/plants');
   const { profile } = useAuth();
   const { plant, isLoading, error, refetch } = usePlant(plantId);
   const { presets, savePresets } = useSeasonalPresets(plantId);
@@ -101,13 +103,15 @@ export function PlantDetailPage({ plantId }: PlantDetailPageProps) {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 p-4">
       {/* 헤더 */}
       <div className="flex items-center justify-between">
-        <Button variant="ghost" size="sm" onClick={() => router.back()}>
-          <ArrowLeft className="mr-1 size-4" />
-          뒤로
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" aria-label="뒤로 가기" onClick={goBack}>
+            <ArrowLeft className="size-5" />
+          </Button>
+          <h1 className="text-2xl font-bold">{plant.name}</h1>
+        </div>
         {isAdmin && (
           <div className="flex gap-2">
             <Button variant="outline" size="sm" asChild>
@@ -138,7 +142,6 @@ export function PlantDetailPage({ plantId }: PlantDetailPageProps) {
 
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-bold">{plant.name}</h1>
             {plant.species && (
               <p className="text-muted-foreground">{plant.species}</p>
             )}

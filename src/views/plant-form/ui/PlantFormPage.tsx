@@ -1,18 +1,29 @@
 'use client';
 
+import { ArrowLeft } from 'lucide-react';
 import { usePlant } from '@/entities/plant';
 import { PlantForm } from '@/features/manage-plant';
+import { useGoBack } from '@/shared/lib/useGoBack';
+import { Button } from '@/shared/ui/button';
 
 function PlantFormPageCreate() {
+  const goBack = useGoBack('/plants');
+
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">식물 등록</h1>
+    <div className="flex flex-col gap-4 p-4">
+      <div className="flex items-center gap-2">
+        <Button variant="ghost" size="icon" aria-label="뒤로 가기" onClick={goBack}>
+          <ArrowLeft className="size-5" />
+        </Button>
+        <h1 className="text-2xl font-bold">식물 등록</h1>
+      </div>
       <PlantForm mode="create" />
     </div>
   );
 }
 
 function PlantFormPageEdit({ plantId }: { plantId: string }) {
+  const goBack = useGoBack('/plants');
   const { plant, isLoading, error } = usePlant(plantId);
 
   if (isLoading) {
@@ -34,8 +45,13 @@ function PlantFormPageEdit({ plantId }: { plantId: string }) {
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">식물 수정</h1>
+    <div className="flex flex-col gap-4 p-4">
+      <div className="flex items-center gap-2">
+        <Button variant="ghost" size="icon" aria-label="뒤로 가기" onClick={goBack}>
+          <ArrowLeft className="size-5" />
+        </Button>
+        <h1 className="text-2xl font-bold">식물 수정</h1>
+      </div>
       <PlantForm mode="edit" plantId={plantId} initialData={plant} />
     </div>
   );

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSupabase } from '@/app/providers/SupabaseProvider';
+import { useGoBack } from '@/shared/lib/useGoBack';
 import type { Plant, User } from '@/shared/types';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
@@ -38,6 +39,7 @@ const SUNLIGHT_OPTIONS = [
 
 export function PlantForm({ mode, plantId, initialData }: PlantFormProps) {
   const router = useRouter();
+  const goBack = useGoBack('/plants');
   const { supabase } = useSupabase();
   const [users, setUsers] = useState<Pick<User, 'id' | 'name'>[]>([]);
 
@@ -264,7 +266,7 @@ export function PlantForm({ mode, plantId, initialData }: PlantFormProps) {
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? '저장 중...' : mode === 'create' ? '등록' : '수정'}
         </Button>
-        <Button type="button" variant="outline" onClick={() => router.back()}>
+        <Button type="button" variant="outline" onClick={goBack}>
           취소
         </Button>
       </div>
