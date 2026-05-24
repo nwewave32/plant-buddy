@@ -4,6 +4,7 @@ import { ArrowLeft, LogOut } from 'lucide-react';
 import { useAuth } from '@/app/providers/AuthProvider';
 import { useGoBack } from '@/shared/lib/useGoBack';
 import { Button } from '@/shared/ui/button';
+import { PushToggle } from '@/features/subscribe-push';
 
 export default function SettingsPage() {
   const goBack = useGoBack();
@@ -18,7 +19,12 @@ export default function SettingsPage() {
         <h1 className="text-2xl font-bold">설정</h1>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-4">
+        <div className="rounded-lg border p-4">
+          <h2 className="mb-3 text-lg font-semibold">알림</h2>
+          <PushToggle />
+        </div>
+
         <Button
           variant="outline"
           className="justify-start"

@@ -5,8 +5,9 @@ import type { Plant } from '@/shared/types';
 function chainable(finalResult: { data: unknown; error: unknown }) {
   const chain: Record<string, unknown> = {};
   const methods = [
-    'select', 'insert', 'update', 'delete',
+    'select', 'insert', 'update', 'delete', 'upsert',
     'eq', 'neq', 'lte', 'gte', 'lt', 'gt',
+    'in', 'not',
     'order', 'limit', 'single', 'maybeSingle',
     'returns',
   ];

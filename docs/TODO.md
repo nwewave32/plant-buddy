@@ -93,16 +93,16 @@
 - [x] 연체(지남) 식물 강조 표시
 
 #### 푸시 알림
-- [ ] VAPID 키 생성 및 환경변수 설정
-- [ ] `features/subscribe-push` — PushToggle UI
-- [ ] `features/subscribe-push` — usePushSubscription 훅
-- [ ] `POST /api/push/subscribe` — 푸시 구독 등록 API
-- [ ] `DELETE /api/push/subscribe` — 푸시 구독 해제 API
-- [ ] `POST /api/cron/send-reminders` — 물주기 알림 발송 CRON 구현
-  - [ ] 당일 아침 예정 알림
-  - [ ] 당일 오후 미완료 리마인더
-  - [ ] 예정일+1 연체 알림
-- [ ] Service Worker 푸시 수신 및 알림 클릭 핸들링 검증
+- [x] VAPID 키 생성 및 환경변수 설정
+- [x] `features/subscribe-push` — PushToggle UI (권한 거절 안내 포함)
+- [x] `features/subscribe-push` — usePushSubscription 훅
+- [x] `POST /api/push/subscribe` — 푸시 구독 등록 API
+- [x] `DELETE /api/push/subscribe` — 푸시 구독 해제 API
+- [x] `POST /api/cron/send-reminders` — 물주기 알림 발송 CRON 구현
+  - [x] 당일 아침 예정 알림
+  - [x] 당일 오후 미완료 리마인더 (로직 구현, Vercel Hobby 제약으로 자동 실행은 오전 1회)
+  - [x] 예정일+1 연체 알림
+- [x] Service Worker 푸시 수신 및 알림 클릭 핸들링 검증 (SW 등록 추가)
 
 #### 계절 전환 CRON
 - [ ] `POST /api/cron/season-transition` — 계절 전환 로직 구현
@@ -127,20 +127,20 @@
 - [x] `app/(main)/layout.tsx` — BottomNav, Header 통합
 
 #### 설정
-- [ ] `views/settings` — SettingsPage 구현
+- [x] `views/settings` — SettingsPage 구현
 - [ ] 알림 수신 시각 변경
-- [ ] 푸시 알림 on/off 토글
-- [ ] 로그아웃
+- [x] 푸시 알림 on/off 토글
+- [x] 로그아웃
 
 #### 테스트
 - [ ] shared/lib 유닛 테스트 (season, date, validation)
-- [ ] API Route Handler 통합 테스트
+- [x] API Route Handler 통합 테스트 (push/subscribe, cron/send-reminders 추가)
 - [ ] 주요 플로우 E2E 테스트 (로그인 → 대시보드 → 물주기 완료)
 
 #### 배포
-- [x] vercel.json CRON 설정
-- [ ] Vercel 프로젝트 생성 및 환경변수 설정
-- [ ] Production 첫 배포
+- [x] vercel.json CRON 설정 (Hobby 제약으로 send-reminders 1일 1회로 조정)
+- [x] Vercel 프로젝트 생성 및 환경변수 설정
+- [x] Production 첫 배포
 - [ ] CRON 동작 확인
 - [ ] 초기 식물 데이터 입력 (시드)
 
