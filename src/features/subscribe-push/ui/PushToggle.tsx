@@ -14,12 +14,13 @@ export function PushToggle() {
     toggle,
   } = usePushSubscription();
 
+  // 브라우저: 푸시 미지원 → 앱 설치 안내
   if (!isSupported) {
     return (
       <div className="flex flex-col gap-1">
         <span className="text-sm font-medium">알림 받기</span>
         <p className="text-sm text-muted-foreground">
-          이 브라우저에서 알림을 지원하지 않습니다.
+          푸시 알림은 모바일 앱에서 받을 수 있어요. 앱을 설치한 뒤 알림을 켜주세요.
         </p>
       </div>
     );
@@ -41,8 +42,7 @@ export function PushToggle() {
 
       {isDenied && (
         <p className="text-sm text-destructive">
-          알림이 차단되었습니다. 브라우저 주소창 왼쪽의 자물쇠 아이콘을 클릭하고,
-          알림을 &quot;허용&quot;으로 변경해주세요.
+          알림이 차단되었습니다. 기기 설정 → Plant Buddy → 알림에서 허용해주세요.
         </p>
       )}
 

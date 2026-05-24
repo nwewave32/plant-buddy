@@ -1,12 +1,13 @@
-export async function subscribePush(subscription: {
-  endpoint: string;
-  keys_p256dh: string;
-  keys_auth: string;
+import type { PushPlatform } from '@/shared/types';
+
+export async function subscribePush(payload: {
+  fcm_token: string;
+  platform: PushPlatform;
 }) {
   const res = await fetch('/api/push/subscribe', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(subscription),
+    body: JSON.stringify(payload),
   });
 
   if (!res.ok) {
@@ -17,11 +18,11 @@ export async function subscribePush(subscription: {
   return res.json();
 }
 
-export async function unsubscribePush(endpoint: string) {
+export async function unsubscribePush(fcm_token: string) {
   const res = await fetch('/api/push/subscribe', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ endpoint }),
+    body: JSON.stringify({ fcm_token }),
   });
 
   if (!res.ok) {

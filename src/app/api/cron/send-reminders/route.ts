@@ -1,24 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
-import webpush from 'web-push';
+import type { Message } from 'firebase-admin/messaging';
 import { createAdminClient } from '@/shared/api/supabase/admin';
+import { getFcmMessaging } from '@/shared/lib/firebaseAdmin';
 
-const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY;
-const vapidSubject = process.env.VAPID_SUBJECT;
+// FCM 무효 토큰 에러 코드 (해당 구독은 정리한다)
+const INVALID_TOKEN_CODES = new Set([
+  'messaging/registration-token-not-registered',
+  'messaging/invalid-registration-token',
+  'messaging/invalid-argument',
+]);
 
-if (vapidPublicKey && vapidPrivateKey && vapidSubject) {
-  webpush.setVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
-}
-
-// POST /api/cron/send-reminders — 물주기 알림 발송
+// POST /api/cron/send-reminders — 물주기 알림 발송 (FCM)
 export async function POST(request: NextRequest) {
   const authHeader = request.headers.get('authorization');
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  if (!vapidPublicKey || !vapidPrivateKey || !vapidSubject) {
-    return NextResponse.json({ error: 'VAPID 환경변수가 설정되지 않았습니다' }, { status: 500 });
   }
 
   const supabase = createAdminClient();
@@ -68,15 +64,15 @@ export async function POST(request: NextRequest) {
   }
 
   // 식물을 담당자 기준 그룹화
-  const userPlants = new Map<string, typeof targetPlants>();
+  const userPlants = new Map<string, DuePlant[]>();
   for (const plant of targetPlants) {
-    const userId = plant.assigned_user_id!;
+    const userId = plant.assigned_user_id;
     const existing = userPlants.get(userId) ?? [];
     existing.push(plant);
     userPlants.set(userId, existing);
   }
 
-  // 해당 유저들의 푸시 구독 조회
+  // 해당 유저들의 FCM 구독 조회
   const userIds = [...userPlants.keys()];
   const { data: subData, error: subError } = await supabase
     .from('push_subscriptions')
@@ -88,15 +84,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: '푸시 구독 조회 실패' }, { status: 500 });
   }
 
-  type Sub = { id: string; user_id: string; endpoint: string; keys_p256dh: string; keys_auth: string };
+  type Sub = { id: string; user_id: string; fcm_token: string; platform: string };
   const subscriptions = subData as Sub[] | null;
 
   if (!subscriptions || subscriptions.length === 0) {
     return NextResponse.json({ sent: 0, failed: 0, cleaned: 0 });
   }
 
-  // 알림 발송
-  const sendList: { sub: typeof subscriptions[0]; payload: string }[] = [];
+  // FCM 메시지 목록 구성 (토큰 기준)
+  const messages: Message[] = [];
+  const messageTokens: string[] = []; // messages와 동일 인덱스의 토큰 (정리용)
 
   for (const sub of subscriptions) {
     const plants = userPlants.get(sub.user_id);
@@ -119,54 +116,45 @@ export async function POST(request: NextRequest) {
         body = '오늘 안으로 물을 주세요 💧';
       }
 
-      sendList.push({
-        sub,
-        payload: JSON.stringify({
-          title,
-          body,
-          data: { url: `/plants/${plant.id}`, plantId: plant.id },
-        }),
+      messages.push({
+        token: sub.fcm_token,
+        notification: { title, body },
+        data: { url: `/plants/${plant.id}`, plantId: plant.id },
       });
+      messageTokens.push(sub.fcm_token);
     }
   }
 
-  const results = await Promise.allSettled(
-    sendList.map(({ sub, payload }) =>
-      webpush.sendNotification(
-        {
-          endpoint: sub.endpoint,
-          keys: { p256dh: sub.keys_p256dh, auth: sub.keys_auth },
-        },
-        payload,
-      ),
-    ),
-  );
+  if (messages.length === 0) {
+    return NextResponse.json({ sent: 0, failed: 0, cleaned: 0 });
+  }
+
+  const batch = await getFcmMessaging().sendEach(messages);
 
   let sent = 0;
   let failed = 0;
-  const expiredEndpoints: string[] = [];
+  const expiredTokens = new Set<string>();
 
-  for (let i = 0; i < results.length; i++) {
-    const result = results[i];
-    if (result.status === 'fulfilled') {
+  batch.responses.forEach((res, i) => {
+    if (res.success) {
       sent++;
     } else {
       failed++;
-      const statusCode = (result.reason as { statusCode?: number })?.statusCode;
-      if (statusCode === 410 || statusCode === 404) {
-        expiredEndpoints.push(sendList[i].sub.endpoint);
+      const code = res.error?.code;
+      if (code && INVALID_TOKEN_CODES.has(code)) {
+        expiredTokens.add(messageTokens[i]);
       }
     }
-  }
+  });
 
-  // 만료된 구독 정리
+  // 무효 토큰 정리
   let cleaned = 0;
-  if (expiredEndpoints.length > 0) {
-    const uniqueEndpoints = [...new Set(expiredEndpoints)];
+  if (expiredTokens.size > 0) {
+    const tokens = [...expiredTokens];
     const { count } = await supabase
       .from('push_subscriptions')
-      .delete()
-      .in('endpoint', uniqueEndpoints);
+      .delete({ count: 'exact' })
+      .in('fcm_token', tokens);
     cleaned = count ?? 0;
   }
 

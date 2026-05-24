@@ -92,17 +92,32 @@
 - [x] 오늘의 할 일 + 다음 예정 식물 표시
 - [x] 연체(지남) 식물 강조 표시
 
-#### 푸시 알림
-- [x] VAPID 키 생성 및 환경변수 설정
-- [x] `features/subscribe-push` — PushToggle UI (권한 거절 안내 포함)
-- [x] `features/subscribe-push` — usePushSubscription 훅
-- [x] `POST /api/push/subscribe` — 푸시 구독 등록 API
-- [x] `DELETE /api/push/subscribe` — 푸시 구독 해제 API
-- [x] `POST /api/cron/send-reminders` — 물주기 알림 발송 CRON 구현
+#### 푸시 알림 (web-push → FCM 단일 전환)
+> 초기 web-push(VAPID)로 구현했으나, PWA 알림 UX 한계로 **Capacitor 네이티브 + FCM**으로 전환. web-push는 완전 제거.
+- [x] ~~VAPID 키 생성 및 환경변수 설정~~ → FIREBASE_SERVICE_ACCOUNT로 대체
+- [x] `features/subscribe-push` — PushToggle UI (네이티브 토글 / 브라우저는 앱 설치 안내)
+- [x] `features/subscribe-push` — usePushSubscription 훅 (Capacitor FCM 기반)
+- [x] `POST /api/push/subscribe` — FCM 토큰 구독 등록 API
+- [x] `DELETE /api/push/subscribe` — FCM 토큰 구독 해제 API
+- [x] `POST /api/cron/send-reminders` — 물주기 알림 발송 CRON (FCM)
   - [x] 당일 아침 예정 알림
   - [x] 당일 오후 미완료 리마인더 (로직 구현, Vercel Hobby 제약으로 자동 실행은 오전 1회)
   - [x] 예정일+1 연체 알림
-- [x] Service Worker 푸시 수신 및 알림 클릭 핸들링 검증 (SW 등록 추가)
+- [x] 무효 FCM 토큰 자동 정리
+
+#### 하이브리드 앱 (Capacitor + FCM)
+> 웹앱을 네이티브 셸로 감싸 앱스토어 배포 + 네이티브 푸시 UX 확보. WebView는 Vercel 배포 URL 로드(서버 모드).
+- [x] Capacitor 설치 + capacitor.config.ts (server.url, appId=app.plantbuddy)
+- [x] DB 마이그레이션 00007 — push_subscriptions FCM 스키마 전환
+- [x] firebase-admin 발송 헬퍼 (src/shared/lib/firebaseAdmin.ts)
+- [x] 네이티브 푸시 구독/해제 + 알림 탭 → 식물 페이지 네비게이트
+- [ ] Firebase 프로젝트 생성 + 서비스 계정 키 (Vercel env)
+- [ ] iOS APNs 인증키(.p8) 생성 + Firebase 업로드
+- [ ] `npx cap add ios/android` + 네이티브 설정파일 배치
+- [ ] Xcode: Push Notifications / Background Modes capability
+- [ ] 온디바이스 테스트 (로그인 → 알림 토글 → 수신)
+- [ ] WebView 내 Supabase 세션/로그인 콜백 검증
+- [ ] 앱스토어/플레이스토어 빌드 및 제출
 
 #### 계절 전환 CRON
 - [ ] `POST /api/cron/season-transition` — 계절 전환 로직 구현
@@ -205,6 +220,26 @@
 - [ ] CSV 임포트 (초기 데이터 일괄 입력)
 - [ ] 같은 종 프리셋 복사 기능
 - [ ] 사용자 피드백 반영 및 UX 개선
+
+---
+
+## 공개 배포 (향후 과제)
+
+> 사내 한정에서 **일반 사용자 대상 앱스토어 공개 배포**로 확장 시 필요한 항목. 현재 범위 아님, 추후 진행.
+
+#### 법적/필수
+- [ ] 개인정보처리방침 페이지 (스토어 제출 필수)
+- [ ] 이용약관 페이지
+- [ ] 계정 삭제 기능 (Apple App Store 필수 — 계정 생성 앱은 삭제 경로 제공 의무)
+
+#### 스토어 등록
+- [ ] 앱 아이콘 / 스플래시 / 스크린샷 / 스토어 설명
+- [ ] 데이터 안전 양식 (Google Play) / 개인정보 라벨 (Apple)
+- [ ] 연령 등급 설정
+
+#### 제품 확장
+- [ ] 사내 가정 제거 — 온보딩/회원가입 흐름, 일반 사용자용 카피 검토
+- [ ] 사용자 분리 / 멀티 테넌시 검토 (조직 단위 데이터 격리)
 
 ---
 

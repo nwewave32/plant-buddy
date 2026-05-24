@@ -12,9 +12,8 @@ const { POST, DELETE } = await import('@/app/api/push/subscribe/route');
 const BASE_URL = 'http://localhost:3000/api/push/subscribe';
 
 const validSubscription = {
-  endpoint: 'https://fcm.googleapis.com/fcm/send/test-endpoint',
-  keys_p256dh: 'BNcRdreALRFXTkOOUHK1EtK2wtaz5Ry4YfYCA_0QTpQtUbVlUls0VJXg7A8u-Ts1XbjhazAkj7I99e8p8REfWRg',
-  keys_auth: 'tBHItJI5svbpC7012fS_Aw',
+  fcm_token: 'fcm-token-abc123',
+  platform: 'android',
 };
 
 describe('POST /api/push/subscribe', () => {
@@ -54,9 +53,9 @@ describe('POST /api/push/subscribe', () => {
     expect(data.error).toBe('잘못된 요청 형식입니다');
   });
 
-  it('endpoint 누락 시 400 반환', async () => {
+  it('fcm_token 누락 시 400 반환', async () => {
     const req = new NextRequest(
-      createRequest(BASE_URL, { method: 'POST', body: { keys_p256dh: 'a', keys_auth: 'b' } }),
+      createRequest(BASE_URL, { method: 'POST', body: { platform: 'android' } }),
     );
     const res = await POST(req);
 
@@ -65,11 +64,11 @@ describe('POST /api/push/subscribe', () => {
     expect(data.error).toBe('입력값이 올바르지 않습니다');
   });
 
-  it('keys_p256dh 빈 문자열 시 400 반환', async () => {
+  it('잘못된 platform 시 400 반환', async () => {
     const req = new NextRequest(
       createRequest(BASE_URL, {
         method: 'POST',
-        body: { ...validSubscription, keys_p256dh: '' },
+        body: { fcm_token: 'tok', platform: 'windows' },
       }),
     );
     const res = await POST(req);
@@ -86,7 +85,7 @@ describe('POST /api/push/subscribe', () => {
     expect(data.success).toBe(true);
   });
 
-  it('upsert 호출 시 from("push_subscriptions") 호출됨', async () => {
+  it('구독 시 from("push_subscriptions") 호출됨', async () => {
     const req = new NextRequest(createRequest(BASE_URL, { method: 'POST', body: validSubscription }));
     await POST(req);
 
@@ -121,19 +120,16 @@ describe('DELETE /api/push/subscribe', () => {
     mockCreateClient.mockResolvedValue(mock.client);
 
     const req = new NextRequest(
-      createRequest(BASE_URL, {
-        method: 'DELETE',
-        body: { endpoint: 'https://example.com/push' },
-      }),
+      createRequest(BASE_URL, { method: 'DELETE', body: { fcm_token: 'tok' } }),
     );
     const res = await DELETE(req);
 
     expect(res.status).toBe(401);
   });
 
-  it('잘못된 endpoint 시 400 반환', async () => {
+  it('fcm_token 누락 시 400 반환', async () => {
     const req = new NextRequest(
-      createRequest(BASE_URL, { method: 'DELETE', body: { endpoint: 'not-a-url' } }),
+      createRequest(BASE_URL, { method: 'DELETE', body: {} }),
     );
     const res = await DELETE(req);
 
@@ -144,10 +140,7 @@ describe('DELETE /api/push/subscribe', () => {
 
   it('정상 해제 시 200 반환', async () => {
     const req = new NextRequest(
-      createRequest(BASE_URL, {
-        method: 'DELETE',
-        body: { endpoint: 'https://fcm.googleapis.com/fcm/send/test' },
-      }),
+      createRequest(BASE_URL, { method: 'DELETE', body: { fcm_token: 'fcm-token-abc123' } }),
     );
     const res = await DELETE(req);
 
@@ -161,10 +154,7 @@ describe('DELETE /api/push/subscribe', () => {
     mockCreateClient.mockResolvedValue(mock.client);
 
     const req = new NextRequest(
-      createRequest(BASE_URL, {
-        method: 'DELETE',
-        body: { endpoint: 'https://fcm.googleapis.com/fcm/send/test' },
-      }),
+      createRequest(BASE_URL, { method: 'DELETE', body: { fcm_token: 'fcm-token-abc123' } }),
     );
     const res = await DELETE(req);
 

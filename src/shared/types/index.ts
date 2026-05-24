@@ -81,13 +81,14 @@ export interface Delegation {
   created_at: string;
 }
 
-// === Push Subscription ===
+// === Push Subscription (FCM) ===
+export type PushPlatform = 'ios' | 'android';
+
 export interface PushSubscription {
   id: string;
   user_id: string;
-  endpoint: string;
-  keys_p256dh: string;
-  keys_auth: string;
+  fcm_token: string;
+  platform: PushPlatform;
   created_at: string;
 }
 

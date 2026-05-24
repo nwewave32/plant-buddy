@@ -43,3 +43,20 @@ yarn-error.log*
 next-env.d.ts
 
 certificates
+
+# Capacitor / native build artifacts
+/ios/App/Pods
+/ios/App/App/public
+/ios/App/build
+/ios/DerivedData
+*.xcuserstate
+/android/.gradle
+/android/build
+/android/app/build
+/android/local.properties
+/android/.idea
+/android/capacitor-cordova-android-plugins
+
+# Firebase / native push secrets (절대 커밋 금지)
+google-services.json
+GoogleService-Info.plist

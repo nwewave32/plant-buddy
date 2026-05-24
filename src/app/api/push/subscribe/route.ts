@@ -3,16 +3,15 @@ import { z } from 'zod';
 import { createClient } from '@/shared/api/supabase/server';
 
 const subscribeSchema = z.object({
-  endpoint: z.string().url('올바른 endpoint URL이 필요합니다'),
-  keys_p256dh: z.string().min(1, 'p256dh 키가 필요합니다'),
-  keys_auth: z.string().min(1, 'auth 키가 필요합니다'),
+  fcm_token: z.string().min(1, 'FCM 토큰이 필요합니다'),
+  platform: z.enum(['ios', 'android']),
 });
 
 const unsubscribeSchema = z.object({
-  endpoint: z.string().url('올바른 endpoint URL이 필요합니다'),
+  fcm_token: z.string().min(1, 'FCM 토큰이 필요합니다'),
 });
 
-// POST /api/push/subscribe — 푸시 구독 등록
+// POST /api/push/subscribe — FCM 푸시 구독 등록
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -35,13 +34,13 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { endpoint, keys_p256dh, keys_auth } = parsed.data;
+  const { fcm_token, platform } = parsed.data;
 
   const { error: dbError } = await supabase
     .from('push_subscriptions')
     .upsert(
-      { user_id: user.id, endpoint, keys_p256dh, keys_auth } as never,
-      { onConflict: 'user_id,endpoint' },
+      { user_id: user.id, fcm_token, platform } as never,
+      { onConflict: 'user_id,fcm_token' },
     );
 
   if (dbError) {
@@ -52,7 +51,7 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({ success: true }, { status: 201 });
 }
 
-// DELETE /api/push/subscribe — 푸시 구독 해제
+// DELETE /api/push/subscribe — FCM 푸시 구독 해제
 export async function DELETE(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -79,7 +78,7 @@ export async function DELETE(request: NextRequest) {
     .from('push_subscriptions')
     .delete()
     .eq('user_id', user.id)
-    .eq('endpoint', parsed.data.endpoint);
+    .eq('fcm_token', parsed.data.fcm_token);
 
   if (dbError) {
     console.error('푸시 구독 해제 실패:', dbError);
