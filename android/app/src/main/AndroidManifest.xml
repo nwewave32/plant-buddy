@@ -24,6 +24,12 @@
 
         </activity>
 
+        <!-- FCM 기본 알림 채널: 백그라운드 수신 시 이 채널로 표시된다.
+             채널 자체는 앱 시작 시 JS(usePushSubscription)에서 생성한다. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

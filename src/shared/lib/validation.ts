@@ -56,3 +56,11 @@ export const createDelegationSchema = z.object({
 export const loginSchema = z.object({
   email: z.string().email('유효한 이메일을 입력해주세요'),
 });
+
+// Supabase Email OTP 길이는 6~10자리로 설정 가능하므로 범위로 수용한다.
+export const otpSchema = z.object({
+  token: z
+    .string()
+    .trim()
+    .regex(/^\d{6,10}$/, '인증 코드를 정확히 입력해주세요'),
+});

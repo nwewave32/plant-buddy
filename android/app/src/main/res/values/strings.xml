@@ -4,4 +4,5 @@
     <string name="title_activity_main">Plant Buddy</string>
     <string name="package_name">app.plantbuddy</string>
     <string name="custom_url_scheme">app.plantbuddy</string>
+    <string name="default_notification_channel_id">plant_buddy_reminders</string>
 </resources>

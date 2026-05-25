@@ -11,6 +11,28 @@ const unsubscribeSchema = z.object({
   fcm_token: z.string().min(1, 'FCM 토큰이 필요합니다'),
 });
 
+// GET /api/push/subscribe — 현재 유저의 등록된 FCM 토큰 목록 (구독 상태 복원용)
+export async function GET() {
+  const supabase = await createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return NextResponse.json({ error: '인증이 필요합니다' }, { status: 401 });
+  }
+
+  const { data, error: dbError } = await supabase
+    .from('push_subscriptions')
+    .select('fcm_token')
+    .eq('user_id', user.id);
+
+  if (dbError) {
+    console.error('푸시 구독 조회 실패:', dbError);
+    return NextResponse.json({ error: '구독 조회에 실패했습니다' }, { status: 500 });
+  }
+
+  const tokens = (data as { fcm_token: string }[] | null)?.map((r) => r.fcm_token) ?? [];
+  return NextResponse.json({ tokens });
+}
+
 // POST /api/push/subscribe — FCM 푸시 구독 등록
 export async function POST(request: NextRequest) {
   const supabase = await createClient();

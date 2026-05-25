@@ -7,7 +7,7 @@ vi.mock('@/shared/api/supabase/server', () => ({
   createClient: () => mockCreateClient(),
 }));
 
-const { POST, DELETE } = await import('@/app/api/push/subscribe/route');
+const { GET, POST, DELETE } = await import('@/app/api/push/subscribe/route');
 
 const BASE_URL = 'http://localhost:3000/api/push/subscribe';
 
@@ -15,6 +15,59 @@ const validSubscription = {
   fcm_token: 'fcm-token-abc123',
   platform: 'android',
 };
+
+describe('GET /api/push/subscribe', () => {
+  let mock: ReturnType<typeof createMockSupabaseClient>;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mock = createMockSupabaseClient();
+    mockCreateClient.mockResolvedValue(mock.client);
+  });
+
+  it('비로그인 시 401 반환', async () => {
+    mock = createMockSupabaseClient({ user: null, authError: new Error('no session') });
+    mockCreateClient.mockResolvedValue(mock.client);
+
+    const res = await GET();
+
+    expect(res.status).toBe(401);
+  });
+
+  it('등록된 토큰 목록을 반환', async () => {
+    mock.setQueryResult('push_subscriptions', [
+      { fcm_token: 'tok-1' },
+      { fcm_token: 'tok-2' },
+    ]);
+    mockCreateClient.mockResolvedValue(mock.client);
+
+    const res = await GET();
+
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data.tokens).toEqual(['tok-1', 'tok-2']);
+  });
+
+  it('구독이 없으면 빈 배열 반환', async () => {
+    mock.setQueryResult('push_subscriptions', null);
+    mockCreateClient.mockResolvedValue(mock.client);
+
+    const res = await GET();
+
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data.tokens).toEqual([]);
+  });
+
+  it('DB 에러 시 500 반환', async () => {
+    mock.setQueryResult('push_subscriptions', null, { message: 'db error' });
+    mockCreateClient.mockResolvedValue(mock.client);
+
+    const res = await GET();
+
+    expect(res.status).toBe(500);
+  });
+});
 
 describe('POST /api/push/subscribe', () => {
   let mock: ReturnType<typeof createMockSupabaseClient>;

@@ -1,7 +1,7 @@
 # Plant Buddy - Development TODO
 
 > PRD v1.1 기반 개발 체크리스트
-> 마지막 업데이트: 2026-03-02
+> 마지막 업데이트: 2026-05-25
 
 ---
 
@@ -115,10 +115,12 @@
 - [x] iOS APNs 인증키(.p8) 생성 + Firebase 업로드
 - [x] `npx cap add ios/android` + 네이티브 설정파일 배치
 - [x] Android 빌드·실행 + WebView 원격 로드 + FCM 초기화 확인 (에뮬레이터)
-- [ ] **네이티브 로그인 방식 전환** (매직링크는 WebView 쿠키 분리로 미동작 → 소셜/이메일+비번 중 결정) ⬅️ 현재 블로커
+- [x] **네이티브 로그인 방식 전환** — 이메일 **OTP 코드 입력** 방식으로 전환 (매직링크 코드, 딥링크 불필요, WebView 내 세션 발급). 코드 길이 6~10자리 수용
+- [x] 푸시 구독 버그 수정 — `FirebaseMessaging.then()` 프록시 오류, RLS UPDATE 정책 누락(00008), 토글 상태 미유지(GET 복원)
+- [x] Android 기본 알림 채널 메타데이터 + 채널 생성 (`plant_buddy_reminders`)
+- [x] 온디바이스 푸시 수신 테스트 (토글 → DB row → firebase-admin 발송 → 수신/채널 확인, 에뮬레이터)
 - [ ] Xcode: Push Notifications / Background Modes capability
-- [ ] 온디바이스 푸시 수신 테스트 (로그인 해결 후 → 토글 → DB row → 수신)
-- [ ] 앱스토어/플레이스토어 빌드 및 제출
+- [ ] 앱스토어/플레이스토어 빌드 및 제출 (← 제출 전 `cap sync`로 server.url 프로덕션 복구 필요)
 
 #### 계절 전환 CRON
 - [ ] `POST /api/cron/season-transition` — 계절 전환 로직 구현
@@ -231,7 +233,8 @@
 
 #### 제품 확장
 - [ ] 사내 가정 제거 — 온보딩/회원가입 흐름, 일반 사용자용 카피 검토
-- [ ] 사용자 분리 / 멀티 테넌시 검토 (조직 단위 데이터 격리)
+- [x] 사용자 분리 / 멀티 테넌시 **방향성 검토** → [docs/group-multitenancy-review.md](./group-multitenancy-review.md) (그룹/초대/슈퍼어드민, 구현은 미착수)
+- [ ] 그룹(멀티테넌시) Phase 1 구현 — 멤버십 모델·초대 방식 결정 후 진행
 
 ---
 

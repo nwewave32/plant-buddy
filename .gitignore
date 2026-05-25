@@ -60,3 +60,6 @@ certificates
 # Firebase / native push secrets (절대 커밋 금지)
 google-services.json
 GoogleService-Info.plist
+
+# Supabase CLI 임시 파일
+supabase/.temp/
