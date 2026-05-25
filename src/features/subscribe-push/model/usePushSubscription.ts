@@ -1,12 +1,17 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Capacitor, type PluginListenerHandle, type PermissionState } from '@capacitor/core';
-import { PushNotifications } from '@capacitor/push-notifications';
+import { Capacitor, type PluginListenerHandle } from '@capacitor/core';
 import type { PushPlatform } from '@/shared/types';
 import { subscribePush, unsubscribePush } from '../api/pushApi';
 
-type PermState = PermissionState | null;
+type PermState = 'prompt' | 'prompt-with-rationale' | 'granted' | 'denied' | null;
+
+// firebase SDK는 네이티브에서만 필요하므로 동적 import로 웹 번들에서 분리한다.
+async function loadFirebaseMessaging() {
+  const { FirebaseMessaging } = await import('@capacitor-firebase/messaging');
+  return FirebaseMessaging;
+}
 
 export function usePushSubscription() {
   // 네이티브 앱(Capacitor)에서만 푸시를 지원한다. 브라우저는 미지원 → 앱 설치 안내.
@@ -31,12 +36,14 @@ export function usePushSubscription() {
     const handles: PluginListenerHandle[] = [];
 
     (async () => {
-      // FCM 토큰 수신 → 서버에 등록
+      const FirebaseMessaging = await loadFirebaseMessaging();
+
+      // FCM 토큰 갱신 수신 → 서버에 등록
       handles.push(
-        await PushNotifications.addListener('registration', async (token) => {
-          tokenRef.current = token.value;
+        await FirebaseMessaging.addListener('tokenReceived', async (event) => {
+          tokenRef.current = event.token;
           try {
-            await subscribePush({ fcm_token: token.value, platform });
+            await subscribePush({ fcm_token: event.token, platform });
             setIsSubscribed(true);
           } catch (err) {
             setError(err instanceof Error ? err : new Error('구독 등록 실패'));
@@ -44,24 +51,20 @@ export function usePushSubscription() {
         }),
       );
 
-      handles.push(
-        await PushNotifications.addListener('registrationError', (err) => {
-          setError(new Error(`푸시 등록 오류: ${err.error}`));
-        }),
-      );
-
       // 알림 탭 → 해당 식물 페이지로 이동
       handles.push(
-        await PushNotifications.addListener('pushNotificationActionPerformed', (action) => {
-          const url = action.notification.data?.url;
-          if (typeof url === 'string') {
+        await FirebaseMessaging.addListener('notificationActionPerformed', (event) => {
+          const data = event.notification.data as Record<string, unknown> | undefined;
+          const url = data?.url;
+          // 앱 내부 상대경로만 허용 (외부/javascript: URL 주입 방지)
+          if (typeof url === 'string' && url.startsWith('/')) {
             window.location.assign(url);
           }
         }),
       );
 
       // 현재 권한 상태 반영
-      const perm = await PushNotifications.checkPermissions();
+      const perm = await FirebaseMessaging.checkPermissions();
       setPermissionState(perm.receive);
       setIsLoading(false);
     })();
@@ -77,16 +80,24 @@ export function usePushSubscription() {
     setError(null);
 
     try {
+      const FirebaseMessaging = await loadFirebaseMessaging();
+
       if (isSubscribed) {
-        // 해제: 서버 row 삭제 (네이티브 토큰 자체 폐기 API는 없음)
+        // 해제: 서버 row 삭제 + 토큰 폐기
         if (tokenRef.current) {
           await unsubscribePush(tokenRef.current);
         }
+        try {
+          await FirebaseMessaging.deleteToken();
+        } catch {
+          // 토큰 삭제 실패는 무시 (서버 row는 이미 제거됨)
+        }
+        tokenRef.current = null;
         setIsSubscribed(false);
       } else {
-        let perm = await PushNotifications.checkPermissions();
-        if (perm.receive === 'prompt') {
-          perm = await PushNotifications.requestPermissions();
+        let perm = await FirebaseMessaging.checkPermissions();
+        if (perm.receive === 'prompt' || perm.receive === 'prompt-with-rationale') {
+          perm = await FirebaseMessaging.requestPermissions();
         }
         setPermissionState(perm.receive);
 
@@ -94,8 +105,11 @@ export function usePushSubscription() {
           return;
         }
 
-        // register() → 'registration' 리스너가 토큰을 받아 subscribePush 수행
-        await PushNotifications.register();
+        // getToken() → FCM 토큰 즉시 획득 → 서버 등록
+        const { token } = await FirebaseMessaging.getToken();
+        tokenRef.current = token;
+        await subscribePush({ fcm_token: token, platform: Capacitor.getPlatform() as PushPlatform });
+        setIsSubscribed(true);
       }
     } catch (err) {
       setError(err instanceof Error ? err : new Error('알 수 없는 오류가 발생했습니다'));

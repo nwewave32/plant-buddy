@@ -7,12 +7,15 @@ const config: CapacitorConfig = {
   // webDir은 CLI 요구사항이라 placeholder로 둔다 (서버 모드에선 미사용).
   webDir: 'public',
   server: {
-    url: 'https://plant-buddy.vercel.app',
+    url: 'https://plant-buddy-nine.vercel.app',
     cleartext: false,
-    allowNavigation: ['*.vercel.app', '*.supabase.co'],
+    allowNavigation: ['plant-buddy-nine.vercel.app', '*.supabase.co'],
   },
   plugins: {
     PushNotifications: {
+      presentationOptions: ['badge', 'sound', 'alert'],
+    },
+    FirebaseMessaging: {
       presentationOptions: ['badge', 'sound', 'alert'],
     },
   },

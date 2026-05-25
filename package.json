@@ -14,14 +14,15 @@
     "cap:android": "cap open android"
   },
   "dependencies": {
+    "@capacitor-firebase/messaging": "^8.2.0",
     "@capacitor/app": "^8.1.0",
     "@capacitor/core": "^8.3.4",
-    "@capacitor/push-notifications": "^8.1.1",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.98.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "firebase": "^12.13.0",
     "firebase-admin": "^13.10.0",
     "lucide-react": "^0.576.0",
     "next": "16.1.6",
