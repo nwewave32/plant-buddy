@@ -111,12 +111,13 @@
 - [x] DB 마이그레이션 00007 — push_subscriptions FCM 스키마 전환
 - [x] firebase-admin 발송 헬퍼 (src/shared/lib/firebaseAdmin.ts)
 - [x] 네이티브 푸시 구독/해제 + 알림 탭 → 식물 페이지 네비게이트
-- [ ] Firebase 프로젝트 생성 + 서비스 계정 키 (Vercel env)
-- [ ] iOS APNs 인증키(.p8) 생성 + Firebase 업로드
-- [ ] `npx cap add ios/android` + 네이티브 설정파일 배치
+- [x] Firebase 프로젝트 생성 + 서비스 계정 키 (Vercel env)
+- [x] iOS APNs 인증키(.p8) 생성 + Firebase 업로드
+- [x] `npx cap add ios/android` + 네이티브 설정파일 배치
+- [x] Android 빌드·실행 + WebView 원격 로드 + FCM 초기화 확인 (에뮬레이터)
+- [ ] **네이티브 로그인 방식 전환** (매직링크는 WebView 쿠키 분리로 미동작 → 소셜/이메일+비번 중 결정) ⬅️ 현재 블로커
 - [ ] Xcode: Push Notifications / Background Modes capability
-- [ ] 온디바이스 테스트 (로그인 → 알림 토글 → 수신)
-- [ ] WebView 내 Supabase 세션/로그인 콜백 검증
+- [ ] 온디바이스 푸시 수신 테스트 (로그인 해결 후 → 토글 → DB row → 수신)
 - [ ] 앱스토어/플레이스토어 빌드 및 제출
 
 #### 계절 전환 CRON
@@ -127,14 +128,7 @@
   - [ ] 담당자 계절 전환 알림 발송
 - [ ] 프리셋 폴백 전략 (프리셋 없으면 기존값 유지)
 
-### 4주차 — PWA, 네비게이션, 테스트, 배포
-
-#### PWA
-- [x] manifest.json 생성
-- [x] Service Worker (sw.js) 생성
-- [ ] PWA 설치 프롬프트 UI
-- [ ] 오프라인 기본 페이지 (fallback)
-- [ ] 앱 아이콘 제작 (icon-192.png, icon-512.png, badge-72.png)
+### 4주차 — 네비게이션, 테스트, 배포
 
 #### 네비게이션
 - [x] `widgets/navigation` — BottomNav UI (홈, 식물, 캘린더)
@@ -211,11 +205,9 @@
 - [ ] 날짜별 물주기 예정/완료 표시
 - [ ] 캘린더에서 식물 상세로 이동
 
-### 8주차 — 오프라인 강화, UX 개선
+### 8주차 — 오프라인 폴백, UX 개선
 
-- [ ] Service Worker 캐싱 전략 (네트워크 우선 + 캐시 폴백)
-- [ ] 오프라인 상태 인디케이터
-- [ ] 오프라인 물주기 완료 → 온라인 복귀 시 동기화
+- [ ] 오프라인 폴백 화면 (Capacitor 서버 모드 — 네트워크 없으면 빈 화면이므로 안내 페이지 필요. `errorPath`로 번들 내 로컬 HTML 표시)
 - [ ] 식물 사진 갤러리 (성장 기록)
 - [ ] CSV 임포트 (초기 데이터 일괄 입력)
 - [ ] 같은 종 프리셋 복사 기능

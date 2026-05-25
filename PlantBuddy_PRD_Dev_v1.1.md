@@ -7,6 +7,17 @@
 
 ---
 
+> ## ⚠️ 구현 변경 노트 (PRD 이후 결정사항)
+>
+> 아래 항목은 본 PRD 작성 이후 개발 과정에서 변경되었다. PRD 본문의 해당 서술보다 이 노트가 우선한다.
+>
+> - **푸시 알림: Web Push(VAPID) → FCM**: PWA 웹 푸시의 알림 권한 UX 한계(특히 iOS)로, **Capacitor 네이티브 앱 + FCM(firebase-admin 발송)**으로 전환했다. `web-push`/VAPID, `next-pwa`, Service Worker 푸시 핸들러는 모두 제거되었다.
+> - **PWA → 하이브리드 네이티브 앱**: PWA(설치 프롬프트/Service Worker 캐싱/manifest)는 사용하지 않는다. 대신 **Capacitor로 iOS/Android 네이티브 셸**을 만들어 배포된 웹앱(Vercel)을 WebView **서버 모드(Remote URL)**로 로드한다. 따라서 8장 Service Worker / 10장 PWA 설정 섹션은 더 이상 유효하지 않다.
+> - **오프라인 대응**: 서버 모드 특성상 네트워크가 없으면 빈 화면이 되므로, SW 캐싱 대신 **Capacitor `errorPath`(번들 내 로컬 안내 페이지)**로 처리한다.
+> - **FSD `pages` → `views`**: Next.js Pages Router 충돌 회피 (CLAUDE.md 참고).
+
+---
+
 ## 1. 프로젝트 개요
 
 ### 1.1 배경

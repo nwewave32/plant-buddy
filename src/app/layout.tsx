@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { SupabaseProvider } from '@/app/providers/SupabaseProvider';
-import { ServiceWorkerProvider } from '@/app/providers/ServiceWorkerProvider';
 import './globals.css';
 
 const geistSans = Geist({
@@ -17,7 +16,6 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'Plant Buddy',
   description: '사내 식물 관리 서비스',
-  manifest: '/manifest.json',
 };
 
 export const viewport: Viewport = {
@@ -38,9 +36,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <SupabaseProvider>
-          <ServiceWorkerProvider>
-            {children}
-          </ServiceWorkerProvider>
+          {children}
         </SupabaseProvider>
       </body>
     </html>
